@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, and_
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -36,14 +36,10 @@ class Lead(Base):
     object_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
     purchase_purpose: Mapped[str | None] = mapped_column(String(255), nullable=True)
     meeting_format: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    meeting_scheduled_datetime: Mapped[datetime | None] = mapped_column(
-        DateTime, nullable=True
-    )
+    meeting_scheduled_datetime: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     zoom_link: Mapped[str | None] = mapped_column(String(255), nullable=True)
     deposit_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    meeting_conducted_date: Mapped[datetime | None] = mapped_column(
-        DateTime, nullable=True
-    )
+    meeting_conducted_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     deal_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     payment_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
     down_payment_percent: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -54,17 +50,25 @@ class Lead(Base):
     referrer: Mapped[str | None] = mapped_column(String(255), nullable=True)
     tag_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     tag_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    company_id: Mapped[int | None] = mapped_column(
-        ForeignKey("companies.id"), nullable=True
-    )
+    company_id: Mapped[int | None] = mapped_column(ForeignKey("companies.id"), nullable=True)
 
     # Relationships
     responsible_user: Mapped["User"] = relationship(back_populates="leads")
     status: Mapped["Status"] = relationship(back_populates="leads")
     pipeline: Mapped["Pipeline"] = relationship(back_populates="leads")
     company: Mapped["Company"] = relationship(back_populates="leads")
-    tasks: Mapped[List["Task"]] = relationship(back_populates="lead")
-    events: Mapped[List["Event"]] = relationship(back_populates="lead")
+    
+    tasks: Mapped[List["Task"]] = relationship(
+        "Task",
+        primaryjoin="and_(Task.entity_type=='leads', foreign(Task.entity_id)==Lead.id)",
+        viewonly=True
+    )
+    
+    events: Mapped[List["Event"]] = relationship(
+        "Event",
+        primaryjoin="and_(Event.entity_type=='leads', foreign(Event.entity_id)==Lead.id)",
+        viewonly=True
+    )
 
 
 class Contact(Base):
@@ -88,9 +92,7 @@ class Contact(Base):
     email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     position: Mapped[str | None] = mapped_column(String(255), nullable=True)
     company_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    company_id: Mapped[int | None] = mapped_column(
-        ForeignKey("companies.id"), nullable=True
-    )
+    company_id: Mapped[int | None] = mapped_column(ForeignKey("companies.id"), nullable=True)
     tag_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     tag_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     apartment: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -101,6 +103,18 @@ class Contact(Base):
     # Relationships
     responsible_user: Mapped["User"] = relationship(back_populates="contacts")
     company: Mapped["Company"] = relationship(back_populates="contacts")
+    
+    tasks: Mapped[List["Task"]] = relationship(
+        "Task",
+        primaryjoin="and_(Task.entity_type=='contacts', foreign(Task.entity_id)==Contact.id)",
+        viewonly=True
+    )
+    
+    events: Mapped[List["Event"]] = relationship(
+        "Event",
+        primaryjoin="and_(Event.entity_type=='contacts', foreign(Event.entity_id)==Contact.id)",
+        viewonly=True
+    )
 
 
 class Company(Base):
@@ -138,21 +152,28 @@ class Task(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime)
     responsible_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     group_id: Mapped[int] = mapped_column(Integer)
-    entity_id: Mapped[int | None] = mapped_column(ForeignKey("leads.id"), nullable=True)
-    entity_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    entity_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    entity_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     duration: Mapped[int] = mapped_column(Integer)
     is_completed: Mapped[bool] = mapped_column(Boolean)
     task_type_id: Mapped[int] = mapped_column(Integer)
     text: Mapped[str] = mapped_column(Text)
-    result: Mapped[str | None] = mapped_column(
-        Text, nullable=True
-    )  # Changed from List[Any]
+    result: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     complete_till: Mapped[datetime] = mapped_column(DateTime)
     account_id: Mapped[int] = mapped_column(Integer)
 
     # Relationships
     responsible_user: Mapped["User"] = relationship(back_populates="tasks")
-    lead: Mapped["Lead"] = relationship(back_populates="tasks")
+    lead: Mapped[Optional["Lead"]] = relationship(
+        "Lead",
+        primaryjoin="and_(Task.entity_type=='leads', foreign(Task.entity_id)==Lead.id)",
+        viewonly=True
+    )
+    contact: Mapped[Optional["Contact"]] = relationship(
+        "Contact",
+        primaryjoin="and_(Task.entity_type=='contacts', foreign(Task.entity_id)==Contact.id)",
+        viewonly=True
+    )
 
 
 class Event(Base):
@@ -160,22 +181,32 @@ class Event(Base):
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)
     type: Mapped[str] = mapped_column(String(255))
-    entity_id: Mapped[int] = mapped_column(ForeignKey("leads.id"), nullable=True)
+    entity_id: Mapped[int] = mapped_column(Integer, nullable=True)
     entity_type: Mapped[str] = mapped_column(String(50))
     created_by: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime)
     account_id: Mapped[int] = mapped_column(Integer)
-    value_after_field_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_after_field_type: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_after_enum_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_after_text: Mapped[str | None] = mapped_column(Text, nullable=True)
-    value_before_field_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_before_field_type: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_before_enum_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    value_before_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    value_after_field_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_after_field_type: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_after_enum_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_after_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    value_before_field_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_before_field_type: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_before_enum_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value_before_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationships
-    lead: Mapped["Lead"] = relationship(back_populates="events")
+    lead: Mapped[Optional["Lead"]] = relationship(
+        "Lead",
+        primaryjoin="and_(Event.entity_type=='leads', foreign(Event.entity_id)==Lead.id)",
+        viewonly=True
+    )
+    
+    contact: Mapped[Optional["Contact"]] = relationship(
+        "Contact",
+        primaryjoin="and_(Event.entity_type=='contacts', foreign(Event.entity_id)==Contact.id)",
+        viewonly=True
+    )
 
 
 class User(Base):

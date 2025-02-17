@@ -14,7 +14,7 @@ from app.kommo.tasks import TaskManager
 from app.kommo.events import EventManager
 from app.kommo.pipelines import PipelineManager
 from app.config import settings
-from app.entities import Lead as LeadEntity
+from app.entities import Lead as LeadEntity, Contact as ContactEntity
 
 from app.db.repositories import (
     UserRepository,
@@ -126,20 +126,24 @@ def export_leads(lead_manager: LeadManager):
     return leads
 
 
-def export_tasks(task_manager: TaskManager, leads: list[LeadEntity]):
+def export_tasks(task_manager: TaskManager, leads: list[LeadEntity], contacts: list[ContactEntity]):
     tasks = list(task_manager.get_all_tasks())
     logger.info(f"Got {len(tasks)} tasks from CRM")
 
-    # Создаем множество ID лидов для быстрой проверки
+    # Create sets of existing lead and contact IDs for faster lookup
     lead_ids = {lead.id for lead in leads}
+    contact_ids = {contact.id for contact in contacts}
 
-    # Фильтруем и корректируем задачи
+    # Filter and adjust tasks
     filtered_tasks = []
     for task in tasks:
-        # Если задача привязана к лиду, проверяем его наличие
-        if task.entity_type == 'leads' and task.entity_id not in lead_ids:
-            # Если лида нет в списке, обнуляем entity_id
+        # Clear entity_id if the referenced entity doesn't exist
+        if task.entity_type == 'leads' and (not task.entity_id or task.entity_id not in lead_ids):
             task.entity_id = None
+            task.entity_type = None
+        elif task.entity_type == 'contacts' and (not task.entity_id or task.entity_id not in contact_ids):
+            task.entity_id = None
+            task.entity_type = None
         
         filtered_tasks.append(task)
 
@@ -152,37 +156,31 @@ def export_tasks(task_manager: TaskManager, leads: list[LeadEntity]):
     return filtered_tasks
 
 
-def export_events(event_manager: EventManager, leads: list[LeadEntity]):
-    all_events = []
-    
-    # Создаем множество ID лидов для быстрой проверки
+def export_events(event_manager: EventManager, leads: list[LeadEntity], contacts: list[ContactEntity]):
+    # Создаем множества ID для быстрой проверки
     lead_ids = {lead.id for lead in leads}
+    contact_ids = {contact.id for contact in contacts}
 
-    for lead in leads:
-        events = list(event_manager.get_all_lead_events(lead_id=lead.id))
-        
-        # Фильтруем и корректируем события
-        filtered_events = []
-        for event in events:
-            # Если событие привязано к лиду, проверяем его наличие
-            if event.entity_type == 'leads' and event.entity_id not in lead_ids:
-                # Если лида нет в списке, обнуляем entity_id
-                event.entity_id = None
-            
-            filtered_events.append(event)
+    # Получаем события для лидов
+    events = list(event_manager.get_all_lead_events())
+    
+    # Фильтруем и корректируем события
+    filtered_events = []
+    for event in events:
+        if event.entity_type == 'leads' and event.entity_id not in lead_ids:
+            event.entity_id = None
+        elif event.entity_type == 'contacts' and event.entity_id not in contact_ids:
+            event.entity_id = None
+        filtered_events.append(event)
 
-        all_events.extend(filtered_events)
+    # Сохраняем события батчами
+    for batch in process_in_batches(filtered_events, batch_size=50):
+        with get_session() as session:
+            event_repo = EventRepository(session)
+            event_repo.save_or_update_all(batch)
 
-        for batch in process_in_batches(filtered_events, batch_size=50):
-            with get_session() as session:
-                event_repo = EventRepository(session)
-                event_repo.save_or_update_all(batch)
-
-        logger.info(f"Exported {len(filtered_events)} events for lead {lead.id}")
-
-    logger.info(f"Exported total {len(all_events)} events")
-    return all_events
-
+    logger.info(f"Exported total {len(filtered_events)} events")
+    return filtered_events
 
 def export_data():
     start_time = datetime.now()
@@ -197,8 +195,8 @@ def export_data():
         companies = export_companies(CompanyManager(token_manager, http_client))
         contacts = export_contacts(ContactManager(token_manager, http_client))
         leads = export_leads(LeadManager(token_manager, http_client))
-        tasks = export_tasks(TaskManager(token_manager, http_client), leads)
-        events = export_events(EventManager(token_manager, http_client), leads)
+        tasks = export_tasks(TaskManager(token_manager, http_client), leads, contacts)
+        events = export_events(EventManager(token_manager, http_client), leads, contacts)
 
         end_time = datetime.now()
         duration = end_time - start_time
@@ -209,7 +207,6 @@ def export_data():
         raise
     finally:
         http_client.close()
-
 
 if __name__ == "__main__":
     export_data()
