@@ -1,0 +1,17 @@
+from httpx import Client
+
+from app.config import settings
+
+http_client = Client(base_url=f"https://{settings.KOMMO_URL_BASE}.kommo.com")
+
+json_data = {
+    "client_id": "3285ee66-c066-4383-8926-813e3df503ac",
+    "client_secret": "VVJ9WjodHiGM0jDKtjYEtagXwgqlpqvpr6cusbQQkwPmSHweOEgVdF9jDqyPc12w",
+    "grant_type": "authorization_code",
+    "code": "def50200cc2d00b89be4a546792f5c8c5b0609102605924372c8314ca52114c83360976aa1f43da0231d8fb34c183bd6b4602596daf5a0886fb376e6a15a35920e405025febccbd6b3c46bc8617b8e1421db8ebe0f8b1a45cbbaf938f6d31685a44540ed75cd1fc600b5815bcf097cbe38d464597912751722792af00bfcca6436b770b6e2418528d4c9e3dbae1d5c6aac99d3ba880d996f3df759c6a4d66ea92d835e16f75abe5d1f667f1e58ce7de3d24cfe421a4a627176686e79192b2227a0082c07dcf2904d40cbac40c7d061030c6b195e945c4e6cc4b1988711e86fad625b759a6aea26c45c65b5913d29e3cd39af59ac3b660f928925ffa4946bd37eaecacc7fd6045c5d4cf1b1935f8c2c440bef5571d3d227f6e634286a7826719a54f222204d46c3c6b90549dd43a118f9781a6132e89e116711eb31919e79be593201c8154f606d625c91c32351addf8c8aa1bdfd4beba729dd94bef96cd3f8218b977bc8bb66ddc93bc27fd521ad92bb58ffca41f65400a7a7363f595af127ea5eb837530fd77ba9e68a0c4989bcd78220907dc52402cefa695e3e7e1269768721d3aab6cc513f69cc1ff119818bd06d43040c856cdba59e3690e81efe3f5820fb11a0a6e04cceb89b9e610fedfe82a4c48f8d8db304bd6d7b004ec5a8a42c885a79d12b418babaed9da",
+    "redirect_uri": "https://inshi.kommo.com/",
+}
+
+response = http_client.post("/oauth2/access_token", json=json_data)
+
+print(response.json())

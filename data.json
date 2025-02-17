@@ -1,0 +1,368 @@
+[
+    {
+        "id": 10360807,
+        "name": "Pipeline",
+        "sort": 1,
+        "is_main": true,
+        "is_unsorted_on": false,
+        "is_archive": false,
+        "account_id": 34058091,
+        "_links": {
+            "self": {
+                "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807"
+            }
+        },
+        "_embedded": {
+            "statuses": [
+                {
+                    "id": 79448391,
+                    "name": "Incoming leads",
+                    "sort": 10,
+                    "is_editable": false,
+                    "pipeline_id": 10360807,
+                    "color": "#c1c1c1",
+                    "type": 1,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79448391"
+                        }
+                    }
+                },
+                {
+                    "id": 79491835,
+                    "name": "Соц сети",
+                    "sort": 20,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#f9deff",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79491835"
+                        }
+                    }
+                },
+                {
+                    "id": 79448395,
+                    "name": "Новый лид",
+                    "sort": 30,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#99ccff",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79448395"
+                        }
+                    }
+                },
+                {
+                    "id": 79448399,
+                    "name": "Недзвон",
+                    "sort": 40,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#d6eaff",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79448399"
+                        }
+                    }
+                },
+                {
+                    "id": 79448403,
+                    "name": "Первичный контакт",
+                    "sort": 50,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79448403"
+                        }
+                    }
+                },
+                {
+                    "id": 79448407,
+                    "name": "Потребность выявлена",
+                    "sort": 60,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79448407"
+                        }
+                    }
+                },
+                {
+                    "id": 79482219,
+                    "name": "Встреча запланирована",
+                    "sort": 70,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79482219"
+                        }
+                    }
+                },
+                {
+                    "id": 79482223,
+                    "name": "Встреча проведена\\Прогрев",
+                    "sort": 80,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79482223"
+                        }
+                    }
+                },
+                {
+                    "id": 79482227,
+                    "name": "Задаток",
+                    "sort": 90,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79482227"
+                        }
+                    }
+                },
+                {
+                    "id": 79482231,
+                    "name": "Подготовка договора",
+                    "sort": 100,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79482231"
+                        }
+                    }
+                },
+                {
+                    "id": 79482235,
+                    "name": "Договор подписан",
+                    "sort": 110,
+                    "is_editable": true,
+                    "pipeline_id": 10360807,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/79482235"
+                        }
+                    }
+                },
+                {
+                    "id": 142,
+                    "name": "Реализовано",
+                    "sort": 10000,
+                    "is_editable": false,
+                    "pipeline_id": 10360807,
+                    "color": "#CCFF66",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/142"
+                        }
+                    }
+                },
+                {
+                    "id": 143,
+                    "name": "Не реализовано",
+                    "sort": 11000,
+                    "is_editable": false,
+                    "pipeline_id": 10360807,
+                    "color": "#D5D8DB",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10360807/statuses/143"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "id": 10365323,
+        "name": "Партнёрская",
+        "sort": 2,
+        "is_main": false,
+        "is_unsorted_on": false,
+        "is_archive": false,
+        "account_id": 34058091,
+        "_links": {
+            "self": {
+                "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323"
+            }
+        },
+        "_embedded": {
+            "statuses": [
+                {
+                    "id": 79482567,
+                    "name": "Неразобранное",
+                    "sort": 10,
+                    "is_editable": false,
+                    "pipeline_id": 10365323,
+                    "color": "#c1c1c1",
+                    "type": 1,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482567"
+                        }
+                    }
+                },
+                {
+                    "id": 79482571,
+                    "name": "Новый клиент",
+                    "sort": 20,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#99ccff",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482571"
+                        }
+                    }
+                },
+                {
+                    "id": 79482575,
+                    "name": "В работе",
+                    "sort": 30,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482575"
+                        }
+                    }
+                },
+                {
+                    "id": 79482579,
+                    "name": "Бронь",
+                    "sort": 40,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#fffeb2",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482579"
+                        }
+                    }
+                },
+                {
+                    "id": 79482611,
+                    "name": "Задаток",
+                    "sort": 50,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482611"
+                        }
+                    }
+                },
+                {
+                    "id": 79482615,
+                    "name": "Подготовка договора",
+                    "sort": 60,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482615"
+                        }
+                    }
+                },
+                {
+                    "id": 79482619,
+                    "name": "Договор подписан",
+                    "sort": 70,
+                    "is_editable": true,
+                    "pipeline_id": 10365323,
+                    "color": "#fffd7f",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/79482619"
+                        }
+                    }
+                },
+                {
+                    "id": 142,
+                    "name": "Closed - won",
+                    "sort": 10000,
+                    "is_editable": false,
+                    "pipeline_id": 10365323,
+                    "color": "#CCFF66",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/142"
+                        }
+                    }
+                },
+                {
+                    "id": 143,
+                    "name": "Closed - lost",
+                    "sort": 11000,
+                    "is_editable": false,
+                    "pipeline_id": 10365323,
+                    "color": "#D5D8DB",
+                    "type": 0,
+                    "account_id": 34058091,
+                    "_links": {
+                        "self": {
+                            "href": "https://inshi.kommo.com/api/v4/leads/pipelines/10365323/statuses/143"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+]
