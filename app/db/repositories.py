@@ -149,6 +149,7 @@ class LeadRepository(BaseRepository[Lead, LeadEntity]):
             tag_name=entity.tag_name,
             tag_id=entity.tag_id,
             company_id=entity.company_id,
+            contact_id=entity.contact_id,
         )
 
 
