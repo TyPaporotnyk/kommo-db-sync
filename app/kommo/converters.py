@@ -34,6 +34,16 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
         if first_company:
             company_id = first_company.get("id")
 
+    contact_id = None
+    if json_data.get("_embedded", {}).get("contacts"):
+        first_contact = (
+            json_data["_embedded"]["contacts"][0]
+            if json_data["_embedded"]["contacts"]
+            else None
+        )
+        if first_contact and first_contact.get("is_main"):
+            contact_id = first_contact.get("id")
+
     return Lead(
         id=json_data["id"],
         name=json_data["name"],
@@ -84,6 +94,7 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
         tag_name=tag,
         tag_id=tag_id,
         company_id=company_id,
+        contact_id=contact_id,  # Добавляем новое поле
     )
 
 

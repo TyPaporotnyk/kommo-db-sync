@@ -51,12 +51,14 @@ class Lead(Base):
     tag_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     tag_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     company_id: Mapped[int | None] = mapped_column(ForeignKey("companies.id"), nullable=True)
+    contact_id: Mapped[int | None] = mapped_column(ForeignKey("contacts.id"), nullable=True)  # Добавляем новое поле
 
     # Relationships
     responsible_user: Mapped["User"] = relationship(back_populates="leads")
     status: Mapped["Status"] = relationship(back_populates="leads")
     pipeline: Mapped["Pipeline"] = relationship(back_populates="leads")
     company: Mapped["Company"] = relationship(back_populates="leads")
+    contact: Mapped["Contact"] = relationship(back_populates="leads")  # Добавляем новое отношение
     
     tasks: Mapped[List["Task"]] = relationship(
         "Task",
@@ -115,6 +117,7 @@ class Contact(Base):
         primaryjoin="and_(Event.entity_type=='contacts', foreign(Event.entity_id)==Contact.id)",
         viewonly=True
     )
+    leads: Mapped[List["Lead"]] = relationship(back_populates="contact")
 
 
 class Company(Base):

@@ -43,6 +43,7 @@ class Lead:
     tag_name: Optional[str]
     tag_id: Optional[int]
     company_id: Optional[int]
+    contact_id: Optional[int]
 
 
 @dataclass

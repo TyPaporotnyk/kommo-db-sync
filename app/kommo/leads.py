@@ -22,7 +22,7 @@ class LeadManager:
         }
 
     def get_leads(self, page, limit: int = 250) -> list[Lead]:
-        params = {"limit": limit, "page": page}
+        params = {"limit": limit, "page": page, "with": "contacts"}
 
         response = self.http_client.get(
             "api/v4/leads",
@@ -41,7 +41,7 @@ class LeadManager:
         leads = response.json()["_embedded"]["leads"]
 
         return [convert_lead_json_to_entity(lead) for lead in leads]
-
+    
     def get_all_leads(self) -> Iterable[Lead]:
         page = 1
         is_has_next_page = True
