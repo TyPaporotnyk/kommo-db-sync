@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c6f430b5b7a9
+Revision ID: 2d4a725b6673
 Revises: 
-Create Date: 2025-02-19 05:01:03.691927
+Create Date: 2025-02-23 07:43:58.327993
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c6f430b5b7a9'
+revision: str = '2d4a725b6673'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,6 +36,15 @@ def upgrade() -> None:
     sa.Column('value_before_field_type', sa.Integer(), nullable=True),
     sa.Column('value_before_enum_id', sa.Integer(), nullable=True),
     sa.Column('value_before_text', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('loss_reasons',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('sort', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('account_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('pipelines',
@@ -179,6 +188,7 @@ def upgrade() -> None:
     sa.Column('contact_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['company_id'], ['companies.id'], ),
     sa.ForeignKeyConstraint(['contact_id'], ['contacts.id'], ),
+    sa.ForeignKeyConstraint(['loss_reason_id'], ['loss_reasons.id'], ),
     sa.ForeignKeyConstraint(['pipeline_id'], ['pipelines.id'], ),
     sa.ForeignKeyConstraint(['responsible_user_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['status_id'], ['statuses.id'], ),
@@ -196,5 +206,6 @@ def downgrade() -> None:
     op.drop_table('companies')
     op.drop_table('users')
     op.drop_table('pipelines')
+    op.drop_table('loss_reasons')
     op.drop_table('events')
     # ### end Alembic commands ###

@@ -1,4 +1,4 @@
-from app.entities import Company, Contact, Event, Lead, Pipeline, Status, Task, User
+from app.entities import Company, Contact, Event, Lead, LossReason, Pipeline, Status, Task, User
 
 
 def convert_lead_json_to_entity(json_data: dict) -> Lead:
@@ -12,35 +12,26 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
                     continue
                 custom_fields[field_name] = value
 
+    # Получаем данные о тегах
     tag = None
     tag_id = None
     if json_data.get("_embedded", {}).get("tags"):
-        first_tag = (
-            json_data["_embedded"]["tags"][0]
-            if json_data["_embedded"]["tags"]
-            else None
-        )
+        first_tag = json_data["_embedded"]["tags"][0] if json_data["_embedded"]["tags"] else None
         if first_tag:
             tag = first_tag.get("name")
             tag_id = first_tag.get("id")
 
+    # Получаем данные о компании
     company_id = None
     if json_data.get("_embedded", {}).get("companies"):
-        first_company = (
-            json_data["_embedded"]["companies"][0]
-            if json_data["_embedded"]["companies"]
-            else None
-        )
+        first_company = json_data["_embedded"]["companies"][0] if json_data["_embedded"]["companies"] else None
         if first_company:
             company_id = first_company.get("id")
 
+    # Получаем данные о контакте
     contact_id = None
     if json_data.get("_embedded", {}).get("contacts"):
-        first_contact = (
-            json_data["_embedded"]["contacts"][0]
-            if json_data["_embedded"]["contacts"]
-            else None
-        )
+        first_contact = json_data["_embedded"]["contacts"][0] if json_data["_embedded"]["contacts"] else None
         if first_contact and first_contact.get("is_main"):
             contact_id = first_contact.get("id")
 
@@ -52,7 +43,7 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
         group_id=json_data["group_id"],
         status_id=json_data["status_id"],
         pipeline_id=json_data["pipeline_id"],
-        loss_reason_id=json_data["loss_reason_id"],
+        loss_reason_id=json_data["loss_reason_id"],  # Передаем только id
         created_by=json_data["created_by"],
         updated_by=json_data["updated_by"],
         created_at=json_data["created_at"],
@@ -69,9 +60,7 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
         object_type=custom_fields.get("Тип объекта"),
         purchase_purpose=custom_fields.get("Цель покупки"),
         meeting_format=custom_fields.get("Формат встречи"),
-        meeting_scheduled_datetime=custom_fields.get(
-            "Дата и время запланированной встречи"
-        ),
+        meeting_scheduled_datetime=custom_fields.get("Дата и время запланированной встречи"),
         zoom_link=custom_fields.get("Ссылка на зум встречу"),
         deposit_date=custom_fields.get("Дата задатка"),
         meeting_conducted_date=custom_fields.get("Дата проведённой встречи"),
@@ -94,7 +83,7 @@ def convert_lead_json_to_entity(json_data: dict) -> Lead:
         tag_name=tag,
         tag_id=tag_id,
         company_id=company_id,
-        contact_id=contact_id,  # Добавляем новое поле
+        contact_id=contact_id
     )
 
 
@@ -290,4 +279,15 @@ def convert_pipeline_json_to_entity(json_data: dict) -> Pipeline:
         is_archive=json_data["is_archive"],
         account_id=json_data["account_id"],
         statuses=statuses,
+    )
+
+
+def convert_loss_reason_json_to_entity(json_data: dict) -> LossReason:
+    return LossReason(
+        id=json_data["id"],
+        name=json_data["name"],
+        sort=json_data["sort"],
+        created_at=json_data["created_at"],
+        updated_at=json_data["updated_at"],
+        account_id=json_data.get("account_id")  # Используем get() для безопасного получения
     )

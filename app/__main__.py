@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.kommo.auth import TokenManager
+from app.kommo.converters import convert_lead_json_to_entity, convert_loss_reason_json_to_entity
 from app.kommo.leads import LeadManager
 from app.kommo.contacts import ContactManager
 from app.kommo.companies import CompanyManager
@@ -25,6 +26,7 @@ from app.db.repositories import (
     CompanyRepository,
     TaskRepository,
     EventRepository,
+    LossReasonRepository,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -114,9 +116,30 @@ def export_contacts(contact_manager: ContactManager):
 
 
 def export_leads(lead_manager: LeadManager):
-    leads = list(lead_manager.get_all_leads())
-    logger.info(f"Got {len(leads)} leads from CRM")
+    leads_json = list(lead_manager.get_all_leads())
+    logger.info(f"Got {len(leads_json)} leads from CRM")
 
+    # Собираем все loss_reasons из leads
+    loss_reasons = {}
+    for lead_json in leads_json:
+        if lead_json.get("_embedded", {}).get("loss_reason"):
+            loss_reason_data = lead_json["_embedded"]["loss_reason"][0]
+            # Добавляем account_id из родительской сделки
+            loss_reason_data["account_id"] = lead_json["account_id"]
+            loss_reason = convert_loss_reason_json_to_entity(loss_reason_data)
+            loss_reasons[loss_reason.id] = loss_reason
+
+    logger.info(f"Found {len(loss_reasons)} unique loss reasons in leads")
+
+    # Сначала сохраняем loss_reasons
+    if loss_reasons:
+        with get_session() as session:
+            loss_reason_repo = LossReasonRepository(session)
+            loss_reason_repo.save_or_update_all(list(loss_reasons.values()))
+        logger.info(f"Exported {len(loss_reasons)} loss reasons")
+
+    # Конвертируем и сохраняем leads
+    leads = [convert_lead_json_to_entity(lead_json) for lead_json in leads_json]
     for batch in process_in_batches(leads):
         with get_session() as session:
             lead_repo = LeadRepository(session)
@@ -182,6 +205,7 @@ def export_events(event_manager: EventManager, leads: list[LeadEntity], contacts
     logger.info(f"Exported total {len(filtered_events)} events")
     return filtered_events
 
+
 def export_data():
     start_time = datetime.now()
     logger.info(f"Starting data export at {start_time}")
@@ -194,7 +218,7 @@ def export_data():
         pipelines = export_pipelines(PipelineManager(token_manager, http_client))
         companies = export_companies(CompanyManager(token_manager, http_client))
         contacts = export_contacts(ContactManager(token_manager, http_client))
-        leads = export_leads(LeadManager(token_manager, http_client))
+        leads = export_leads(LeadManager(token_manager, http_client))  # Теперь здесь также обрабатываются loss_reasons
         tasks = export_tasks(TaskManager(token_manager, http_client), leads, contacts)
         events = export_events(EventManager(token_manager, http_client), leads, contacts)
 
@@ -207,6 +231,7 @@ def export_data():
         raise
     finally:
         http_client.close()
+
 
 if __name__ == "__main__":
     export_data()

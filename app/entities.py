@@ -163,3 +163,13 @@ class Pipeline:
     is_archive: bool
     account_id: int
     statuses: List[Status]
+
+
+@dataclass
+class LossReason:
+    id: int
+    name: str
+    sort: int
+    created_at: int
+    updated_at: int
+    account_id: int = None 

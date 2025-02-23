@@ -3,7 +3,7 @@ from typing import List, TypeVar, Generic, Type
 
 from sqlalchemy.orm import Session
 
-from app.db.models import User, Pipeline, Status, Lead, Contact, Company, Task, Event
+from app.db.models import User, Pipeline, Status, Lead, Contact, Company, Task, Event, LossReason
 from app.entities import User as UserEntity
 from app.entities import Pipeline as PipelineEntity
 from app.entities import Status as StatusEntity
@@ -12,6 +12,7 @@ from app.entities import Contact as ContactEntity
 from app.entities import Company as CompanyEntity
 from app.entities import Task as TaskEntity
 from app.entities import Event as EventEntity
+from app.entities import LossReason as LossReasonEntity
 
 T = TypeVar("T")
 E = TypeVar("E")
@@ -276,4 +277,18 @@ class EventRepository(BaseRepository[Event, EventEntity]):
             value_before_field_type=entity.value_before_field_type,
             value_before_enum_id=entity.value_before_enum_id,
             value_before_text=entity.value_before_text,
+        )
+
+class LossReasonRepository(BaseRepository[LossReason, LossReasonEntity]):
+    def __init__(self, session: Session):
+        super().__init__(session, LossReason)
+
+    def _convert_to_db_model(self, entity: LossReasonEntity) -> LossReason:
+        return LossReason(
+            id=entity.id,
+            name=entity.name,
+            sort=entity.sort,
+            created_at=datetime.fromtimestamp(entity.created_at),
+            updated_at=datetime.fromtimestamp(entity.updated_at),
+            account_id=entity.account_id
         )

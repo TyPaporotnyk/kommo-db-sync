@@ -19,7 +19,7 @@ class Lead(Base):
     group_id: Mapped[int] = mapped_column(Integer)
     status_id: Mapped[int] = mapped_column(ForeignKey("statuses.id"))
     pipeline_id: Mapped[int] = mapped_column(ForeignKey("pipelines.id"))
-    loss_reason_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    loss_reason_id: Mapped[int | None] = mapped_column(ForeignKey("loss_reasons.id"), nullable=True)
     created_by: Mapped[int] = mapped_column(Integer)
     updated_by: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime)
@@ -65,7 +65,7 @@ class Lead(Base):
         primaryjoin="and_(Task.entity_type=='leads', foreign(Task.entity_id)==Lead.id)",
         viewonly=True
     )
-    
+    loss_reason: Mapped["LossReason"] = relationship(back_populates="leads")
     events: Mapped[List["Event"]] = relationship(
         "Event",
         primaryjoin="and_(Event.entity_type=='leads', foreign(Event.entity_id)==Lead.id)",
@@ -260,3 +260,17 @@ class Status(Base):
     # Relationships
     pipeline: Mapped["Pipeline"] = relationship(back_populates="statuses")
     leads: Mapped[List["Lead"]] = relationship(back_populates="status")
+
+
+class LossReason(Base):
+    __tablename__ = "loss_reasons"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255))
+    sort: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    updated_at: Mapped[datetime] = mapped_column(DateTime)
+    account_id: Mapped[int] = mapped_column(Integer)
+
+    # Relationships
+    leads: Mapped[List["Lead"]] = relationship(back_populates="loss_reason")
